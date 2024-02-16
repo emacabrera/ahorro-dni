@@ -1,0 +1,7 @@
+{
+  "name": "Cuenta DNI Dic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
