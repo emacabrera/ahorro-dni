@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Cuenta DNI Diccionario
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -14,7 +14,15 @@
   </ion-header>
 
   <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <ion-list [inset]="true" detail="false">
+      <ion-item [button]="true" *ngFor="let store of stores()">
+        <ion-label>
+          <strong>{{store.name}}</strong>
+          <ion-note color="medium" class="ion-text-wrap">
+            {{store.days}}
+          </ion-note>
+        </ion-label>
+      </ion-item>
+    </ion-list>
   </div>
 </ion-content>
