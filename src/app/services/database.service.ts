@@ -5,6 +5,7 @@ import {
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
 import { Store } from '../interfaces/store.model';
+import { WeekDays } from 'src/utils/enumerators';
 
 const DB_NAME = 'cuenta-dni-dic-db';
 
@@ -43,11 +44,6 @@ export class DatabaseService {
     this.loadStores();
   }
 
-  async loadStores() {
-    const stores = await this.db.query('SELECT * FROM store');
-    this._stores.set(stores.values || []);
-  }
-
   get stores() {
     return computed(this._stores);
   }
@@ -80,11 +76,16 @@ export class DatabaseService {
   }
 
   async seedDatabase() {
-    const query = `INSERT OR IGNORE INTO store (name, days) VALUES ('Ananda', 'Wedn, Thus')`;
+    const query = `INSERT OR IGNORE INTO store (name, days) VALUES ('Ananda', '${WeekDays.Wednesday}, ${WeekDays.Thursday}')`;
     const result = this.db.query(query);
 
     this.loadStores();
 
     return result;
+  }
+
+  private async loadStores() {
+    const stores = await this.db.query('SELECT * FROM store');
+    this._stores.set(stores.values || []);
   }
 }
