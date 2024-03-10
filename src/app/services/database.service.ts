@@ -35,10 +35,11 @@ export class DatabaseService {
     await this.db.execute(query);
 
     const schemaQuery = `CREATE TABLE IF NOT EXISTS store (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE NOT NULL,
-      days TEXT NOT NULL
-    )`;
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE NOT NULL,
+			days TEXT NOT NULL,
+			address TEXT NULL
+		)`;
 
     await this.db.execute(schemaQuery);
     this.loadStores();
@@ -76,7 +77,11 @@ export class DatabaseService {
   }
 
   async seedDatabase() {
-    const query = `INSERT OR IGNORE INTO store (name, days) VALUES ('Ananda', '${WeekDays.Wednesday}, ${WeekDays.Thursday}')`;
+    const query = `INSERT OR IGNORE INTO store (name, days, address) VALUES
+			(
+				'Ananda', '${WeekDays.Wednesday}, ${WeekDays.Thursday}',
+				'Av. Meeks 1067, Temperley'
+			)`;
     const result = this.db.query(query);
 
     this.loadStores();

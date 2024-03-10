@@ -12,17 +12,18 @@ import {
   IonAvatar,
   IonItemOptions,
   IonItemOption,
-  IonIcon, IonButtons, IonText, IonNote } from '@ionic/angular/standalone';
+  IonIcon, IonButtons, IonText, IonNote, IonButton, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, arrowBack, pencil, trash, location, calendar, list } from 'ionicons/icons';
 import { DatabaseService } from 'src/app/services/database.service';
+import { AddStorePage } from './add-store/add-store.page';
 
 @Component({
   selector: 'app-stores',
   templateUrl: './stores.page.html',
   styleUrls: ['./stores.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonButton, 
     CommonModule,
     IonNote, IonText, IonButtons, 
     IonIcon,
@@ -41,6 +42,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class StoresPage implements OnInit {
   private db = inject(DatabaseService);
+  private modalCtrl = inject(ModalController);
 
   stores = this.db.stores;
 
@@ -50,9 +52,17 @@ export class StoresPage implements OnInit {
 
   ngOnInit() {}
 
-  addStore(): void {
-    // TODO: show add store modal.
-    console.log('add store');
+  async addStore() {
+    const modal = await this.modalCtrl.create({
+      component: AddStorePage
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === "confirm") {
+      console.log(data);
+    }
   }
 
   editStore(id: number): void {

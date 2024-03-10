@@ -1,31 +1,42 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-icon color="primary" slot="icon-only" name="calendar"></ion-icon>
-      &nbsp;
-      <ion-icon color="primary" slot="icon-only" name="list"></ion-icon>
+      <ion-button>
+        <ion-icon color="primary" slot="icon-only" name="calendar"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon color="primary" slot="icon-only" name="list"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title>Negocios</ion-title>
     <ion-buttons slot="end">
-      <ion-icon
-        color="primary"
-        slot="icon-only"
-        name="add"
-        (click)="addStore()"
-      ></ion-icon>
+      <ion-button (click)="addStore()">
+        <ion-icon
+          color="primary"
+          slot="icon-only"
+          name="add"
+        ></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" color="light">
-  <ion-header collapse="condense">
+  <!-- <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Negocios</ion-title>
+      <ion-title size="large">Negocios App</ion-title>
       <ion-buttons slot="end">
-        <ion-icon name="add" (click)="addStore()"></ion-icon>
+        <ion-button>
+        <ion-icon
+          color="primary"
+          slot="icon-only"
+          name="add"
+          (click)="addStore()"
+        ></ion-icon>
+      </ion-button>
       </ion-buttons>
     </ion-toolbar>
-  </ion-header>
+  </ion-header> -->
 
   <ion-list [inset]="true">
     <ion-item-sliding *ngFor="let store of stores()">
@@ -41,7 +52,7 @@
           <ion-text>{{ store.days }}</ion-text><br />
           <ion-note color="medium" class="ion-text-wrap">
             <ion-icon color="danger" name="location"></ion-icon>
-            Av. Meeks 1067, Temperley
+            {{ store.address }}
           </ion-note>
         </ion-label>
         <ion-note slot="end">
