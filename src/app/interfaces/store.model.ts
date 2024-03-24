@@ -6,3 +6,10 @@ export interface Store {
   notes: string;
   days: string;
 }
+
+export interface CreateStore {
+  name: string;
+  address: string;
+  discount: number;
+  days: string;
+}

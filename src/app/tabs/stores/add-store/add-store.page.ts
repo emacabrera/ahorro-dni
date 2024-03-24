@@ -40,6 +40,8 @@ import {
 import { addIcons } from 'ionicons';
 import { close } from 'ionicons/icons';
 import { WeekDays } from 'src/utils/enumerators';
+import { CreateStore, Store } from 'src/app/interfaces/store.model';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'app-add-store',
@@ -76,6 +78,7 @@ export class AddStorePage implements OnInit {
 
   private modalCtrl = inject(ModalController);
   private fb = inject(FormBuilder);
+  private util = inject(UtilService);
 
   constructor() {
     addIcons({ close });
@@ -87,7 +90,7 @@ export class AddStorePage implements OnInit {
       name: ['', Validators.required],
       address: [''],
       discount: ['', Validators.required],
-      days: this.fb.array([], this.checkSelectedDays(1)),
+      days: this.fb.array([], this.util.checkDaysValidation()),
     });
 
     this.weekDays().forEach(() => this.days.push(this.fb.control(false)));
@@ -107,21 +110,15 @@ export class AddStorePage implements OnInit {
 
   confirm() {
     console.log(this.newStoreForm.value);
+    const formValue = this.newStoreForm.value;
+    const store: CreateStore = {
+      name: formValue.name,
+      address: formValue.address || null,
+      discount: formValue.discount,
+      days: this.util.selectedOptionsIntoDays(formValue.days)
+    }
+
+    console.log(store);
     // return this.modalCtrl.dismiss(this.name, 'confirm');
-  }
-
-  private checkSelectedDays(min: number): ValidatorFn {
-    const validator: ValidatorFn = (formArray: AbstractControl) => {
-      if (formArray instanceof FormArray) {
-        const totalSelected = formArray.controls
-          .map((control) => control.value)
-          .reduce((prev, next) => (next ? prev + next : prev), 0);
-        return totalSelected >= min ? null : { required: true };
-      }
-
-      throw new Error('formArray is not an instance of FormArray');
-    };
-
-    return validator;
   }
 }
