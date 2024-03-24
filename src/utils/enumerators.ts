@@ -3,5 +3,6 @@ export enum WeekDays {
     Tuesday = "M",
     Wednesday = "X",
     Thursday = "J",
-    Friday = "V"
+    Friday = "V",
+    Saturday = "S"
 }

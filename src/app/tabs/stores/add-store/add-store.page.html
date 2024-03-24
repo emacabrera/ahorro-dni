@@ -1,22 +1,69 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button color="medium" (click)="cancel()">Cancel</ion-button>
-    </ion-buttons>
-    <ion-title>Welcome</ion-title>
+    <ion-title>Agregar Negocio</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="confirm()" [strong]="true">Confirm</ion-button>
+      <ion-icon slot="icon-only" name="close" (click)="cancel()"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-input
-      ngDefaultControl
-      labelPlacement="stacked"
-      label="Enter your name"
-      [(ngModel)]="name"
-      placeholder="Your name"
-    ></ion-input>
-  </ion-item>
+  <ion-card>
+    <ion-card-content>
+      <form
+        [formGroup]="newStoreForm"
+        (ngSubmit)="confirm()"
+        id="new-store-form"
+      >
+        <ion-list lines="none">
+          <ion-list-header>
+            <ion-label>Datos del negocio</ion-label>
+          </ion-list-header>
+          <ion-input
+            required
+            label="Nombre*"
+            labelPlacement="floating"
+            placeholder="Nombre del negocio"
+            fill="outline"
+            formControlName="name"
+          ></ion-input>
+          <ion-input
+            label="Dirección"
+            labelPlacement="floating"
+            placeholder="Dirección del negocio"
+            fill="outline"
+            formControlName="address"
+          ></ion-input>
+          <ion-input
+            required
+            label="Descuento*"
+            labelPlacement="floating"
+            placeholder="Porcentaje de descuento"
+            type="number"
+            fill="outline"
+            formControlName="discount"
+          ></ion-input>
+          <ion-list-header>
+            <ion-label>Días con descuento</ion-label>
+          </ion-list-header>
+
+          <div formArrayName="days">
+            <ion-item>
+              <ion-checkbox
+                labelPlacement="stacked"
+                *ngFor="let day of days.controls; let i = index"
+                [formControlName]="i"
+              >
+                {{ weekDays()[i] }}
+              </ion-checkbox>
+            </ion-item>
+          </div>
+        </ion-list>
+      </form>
+    </ion-card-content>
+
+    <ion-button expand="block" type="submit" form="new-store-form" [disabled]="!newStoreForm.valid"
+      >Aceptar</ion-button
+    >
+  </ion-card>
 </ion-content>

@@ -11,10 +11,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
-* {
-  font-family: "Roboto", sans-serif;
-}
-
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -30,3 +26,11 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+* {
+  font-family: "Roboto", sans-serif;
+}
+
+.title-center {
+    text-align: center;
+}

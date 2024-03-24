@@ -37,8 +37,10 @@ export class DatabaseService {
     const schemaQuery = `CREATE TABLE IF NOT EXISTS store (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE NOT NULL,
-			days TEXT NOT NULL,
-			address TEXT NULL
+      address TEXT NULL,
+      discount INTEGER NOT NULL,
+      notes TEXT NULL,
+			days TEXT NOT NULL
 		)`;
 
     await this.db.execute(schemaQuery);
@@ -50,7 +52,8 @@ export class DatabaseService {
   }
 
   async addStore(store: Store) {
-    const query = `INSERT INTO store (name, days) VALUES ('${store.name}', '${store.days}')`;
+    const query = `INSERT INTO store (name, address, discount, notes, days) 
+      VALUES ('${store.name}', '${store.address}', ${store.discount}, '${store.notes}', '${store.days}')`;
     const result = await this.db.query(query);
 
     this.loadStores();
@@ -77,11 +80,13 @@ export class DatabaseService {
   }
 
   async seedDatabase() {
-    const query = `INSERT OR IGNORE INTO store (name, days, address) VALUES
-			(
-				'Ananda', '${WeekDays.Wednesday}, ${WeekDays.Thursday}',
-				'Av. Meeks 1067, Temperley'
-			)`;
+    const query = `INSERT OR IGNORE INTO store (name, address, discount, days)
+      VALUES (
+        'Ananda',
+        'Av. Meeks 1067, Temperley',
+        30,
+        '${WeekDays.Wednesday}, ${WeekDays.Thursday}'
+      )`;
     const result = this.db.query(query);
 
     this.loadStores();
