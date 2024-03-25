@@ -1,11 +1,18 @@
-import { Injectable, WritableSignal, computed, signal } from '@angular/core';
+import {
+  Injectable,
+  WritableSignal,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   CapacitorSQLite,
   SQLiteConnection,
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
-import { Store } from '../interfaces/store.model';
+import { CreateStore, Store } from '../interfaces/store.model';
 import { WeekDays } from 'src/utils/enumerators';
+import { UtilService } from './util.service';
 
 const DB_NAME = 'cuenta-dni-dic-db';
 
@@ -16,6 +23,8 @@ export class DatabaseService {
   private sqlite: SQLiteConnection = new SQLiteConnection(CapacitorSQLite);
   private db!: SQLiteDBConnection;
   private _stores: WritableSignal<Store[]> = signal<Store[]>([]);
+
+  private util = inject(UtilService);
 
   constructor() {}
 
@@ -51,9 +60,12 @@ export class DatabaseService {
     return computed(this._stores);
   }
 
-  async addStore(store: Store) {
-    const query = `INSERT INTO store (name, address, discount, notes, days) 
-      VALUES ('${store.name}', '${store.address}', ${store.discount}, '${store.notes}', '${store.days}')`;
+  async addStore(store: CreateStore) {
+    const query = `INSERT INTO store (name, address, discount, days) 
+      VALUES ('${store.name}', ${this.util.toDbString(store.address)}, ${
+      store.discount
+    }, '${store.days}')`;
+    console.log(query);
     const result = await this.db.query(query);
 
     this.loadStores();

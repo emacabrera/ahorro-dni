@@ -50,7 +50,7 @@
         <ion-label>
           <strong>{{ store.name }}</strong><br />
           <ion-text>{{ store.days }}</ion-text><br />
-          <ion-note color="medium" class="ion-text-wrap">
+          <ion-note *ngIf="store.address" color="medium" class="ion-text-wrap">
             <ion-icon color="danger" name="location"></ion-icon>
             {{ store.address }}
           </ion-note>

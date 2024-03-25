@@ -34,4 +34,10 @@ export class UtilService {
 
     return validator;
   }
+
+  toDbString(value: string | null): string | null {
+    if (!value) return null;
+
+    return value.replace(/"/g, "'");
+  }
 }

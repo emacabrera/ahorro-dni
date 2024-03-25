@@ -7,12 +7,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  AbstractControl,
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import {
@@ -42,6 +41,7 @@ import { close } from 'ionicons/icons';
 import { WeekDays } from 'src/utils/enumerators';
 import { CreateStore, Store } from 'src/app/interfaces/store.model';
 import { UtilService } from 'src/app/services/util.service';
+import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
   selector: 'app-add-store',
@@ -79,6 +79,7 @@ export class AddStorePage implements OnInit {
   private modalCtrl = inject(ModalController);
   private fb = inject(FormBuilder);
   private util = inject(UtilService);
+  private db = inject(DatabaseService);
 
   constructor() {
     addIcons({ close });
@@ -89,36 +90,42 @@ export class AddStorePage implements OnInit {
     this.newStoreForm = this.fb.group({
       name: ['', Validators.required],
       address: [''],
-      discount: ['', Validators.required],
-      days: this.fb.array([], this.util.checkDaysValidation()),
+      discount: [
+        '',
+        [Validators.required, Validators.max(100), Validators.min(1)],
+      ],
+      days: this.fb.array(
+        this.buildDaysFormControls(),
+        this.util.checkDaysValidation()
+      ),
     });
-
-    this.weekDays().forEach(() => this.days.push(this.fb.control(false)));
   }
 
   get days() {
     return this.newStoreForm.get('days') as FormArray;
   }
 
-  // buildDaysFormControls() {
-  //   return this.weekDays().forEach((d) => this.days.push(this.fb.control(false)));
-  // }
-
   cancel() {
     return this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  confirm() {
-    console.log(this.newStoreForm.value);
+  async confirm() {
     const formValue = this.newStoreForm.value;
     const store: CreateStore = {
       name: formValue.name,
       address: formValue.address || null,
       discount: formValue.discount,
-      days: this.util.selectedOptionsIntoDays(formValue.days)
-    }
+      days: this.util.selectedOptionsIntoDays(formValue.days),
+    };
 
     console.log(store);
-    // return this.modalCtrl.dismiss(this.name, 'confirm');
+    // await this.db.addStore(store);
+    return this.modalCtrl.dismiss(store, 'confirm');
+  }
+
+  private buildDaysFormControls(): FormControl[] {
+    return this.weekDays().map(() => {
+      return this.fb.control(false);
+    });
   }
 }
