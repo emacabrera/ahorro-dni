@@ -29,6 +29,10 @@ export class DatabaseService {
 
   constructor() {}
 
+  get stores(): Signal<Store[]> {
+    return computed(this._stores);
+  }
+
   async initPlugin(): Promise<void> {
     this.db = await this.sqlite.createConnection(
       DB_NAME,
@@ -57,10 +61,6 @@ export class DatabaseService {
     this.loadStores();
   }
 
-  get stores(): Signal<Store[]> {
-    return computed(this._stores);
-  }
-
   async addStore(store: CreateStore): Promise<void> {
     const query = `INSERT INTO store (name, address, discount, days) 
       VALUES ('${store.name}', ${this.util.toDbString(store.address)}, ${
@@ -71,8 +71,14 @@ export class DatabaseService {
     this.loadStores();
   }
 
-  async updateStoreById(store: Store): Promise<void> {
-    const query = `UPDATE store SET name='${store.name}' WHERE id=${store.id}`;
+  async updateStore(store: Store): Promise<void> {
+    const query = `UPDATE store SET 
+      name='${store.name}',
+      address = '${store.address}',
+      discount = ${store.discount},
+      notes = '${store.notes}',
+      days = '${store.days}'
+      WHERE id=${store.id}`;
     await this.db.query(query);
 
     this.loadStores();

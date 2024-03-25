@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Agregar Negocio</ion-title>
+    <ion-title>Editar Negocio</ion-title>
     <ion-buttons slot="end">
       <ion-icon slot="icon-only" name="close" (click)="cancel()"></ion-icon>
     </ion-buttons>
@@ -11,9 +11,9 @@
   <ion-card>
     <ion-card-content>
       <form
-        [formGroup]="newStoreForm"
+        [formGroup]="updateStoreForm"
         (ngSubmit)="confirm()"
-        id="new-store-form"
+        id="update-store-form"
       >
         <ion-list lines="none">
           <ion-list-header>
@@ -23,14 +23,12 @@
             required
             label="Nombre*"
             labelPlacement="floating"
-            placeholder="Nombre del negocio"
             fill="outline"
             formControlName="name"
           ></ion-input>
           <ion-input
             label="Dirección"
             labelPlacement="floating"
-            placeholder="Dirección del negocio"
             fill="outline"
             formControlName="address"
           ></ion-input>
@@ -38,11 +36,18 @@
             required
             label="Descuento*"
             labelPlacement="floating"
-            placeholder="Porcentaje de descuento"
             type="number"
             fill="outline"
             formControlName="discount"
           ></ion-input>
+          <ion-input
+            label="Notas"
+            labelPlacement="floating"
+            fill="outline"
+            autoGrow="true"
+            formControlName="notes"
+          >
+          </ion-input>
 
           <ion-list-header>
             <ion-label>Días con descuento</ion-label>
@@ -65,8 +70,8 @@
     <ion-button
       expand="block"
       type="submit"
-      form="new-store-form"
-      [disabled]="!newStoreForm.valid"
+      form="update-store-form"
+      [disabled]="!updateStoreForm.valid"
       >Aceptar</ion-button
     >
   </ion-card>

@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  WritableSignal,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, Input, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -36,17 +30,16 @@ import {
   IonLabel,
   IonIcon,
 } from '@ionic/angular/standalone';
+import { UtilService } from 'src/app/services/util.service';
+import { WeekDays } from 'src/utils/enumerators';
+import { Store } from 'src/app/interfaces/store.model';
 import { addIcons } from 'ionicons';
 import { close } from 'ionicons/icons';
-import { WeekDays } from 'src/utils/enumerators';
-import { CreateStore, Store } from 'src/app/interfaces/store.model';
-import { UtilService } from 'src/app/services/util.service';
-import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
-  selector: 'app-add-store',
-  templateUrl: './add-store.page.html',
-  styleUrls: ['./add-store.page.scss'],
+  selector: 'app-edit-store',
+  templateUrl: './edit-store.page.html',
+  styleUrls: ['./edit-store.page.scss'],
   standalone: true,
   imports: [
     IonLabel,
@@ -72,8 +65,9 @@ import { DatabaseService } from 'src/app/services/database.service';
     ReactiveFormsModule,
   ],
 })
-export class AddStorePage implements OnInit {
-  newStoreForm: FormGroup;
+export class EditStorePage implements OnInit {
+  @Input() store: Store;
+  updateStoreForm: FormGroup;
   weekDays: WritableSignal<WeekDays[]>;
 
   private modalCtrl = inject(ModalController);
@@ -86,22 +80,24 @@ export class AddStorePage implements OnInit {
 
   ngOnInit(): void {
     this.weekDays = signal(Object.values(WeekDays));
-    this.newStoreForm = this.fb.group({
-      name: ['', Validators.required],
-      address: [''],
+    this.updateStoreForm = this.fb.group({
+      name: [this.store.name, Validators.required],
+      address: [this.store.address || ''],
       discount: [
-        '',
+        this.store.discount,
         [Validators.required, Validators.max(100), Validators.min(1)],
       ],
+      notes: [this.store.notes || ''],
       days: this.fb.array(
         this.buildDaysFormControls(),
         this.util.checkDaysValidation()
       ),
     });
+    console.log(this.updateStoreForm);
   }
 
   get days(): FormArray<FormControl<any>> {
-    return this.newStoreForm.get('days') as FormArray;
+    return this.updateStoreForm.get('days') as FormArray;
   }
 
   cancel(): Promise<boolean> {
@@ -109,11 +105,13 @@ export class AddStorePage implements OnInit {
   }
 
   async confirm(): Promise<boolean> {
-    const formValue = this.newStoreForm.value;
-    const store: CreateStore = {
+    const formValue = this.updateStoreForm.value;
+    const store: Store = {
+      id: this.store.id,
       name: formValue.name,
       address: formValue.address || null,
       discount: formValue.discount,
+      notes: formValue.notes,
       days: this.util.selectedOptionsIntoDays(formValue.days),
     };
 
@@ -121,8 +119,8 @@ export class AddStorePage implements OnInit {
   }
 
   private buildDaysFormControls(): FormControl[] {
-    return this.weekDays().map(() => {
-      return this.fb.control(false);
+    return this.weekDays().map((day) => {
+      return this.fb.control(this.store.days.includes(day));
     });
   }
 }

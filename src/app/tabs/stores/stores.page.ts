@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Signal, ViewChild, inject, viewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Signal,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -35,6 +41,7 @@ import { AddStorePage } from './add-store/add-store.page';
 import { AlertController } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast.service';
 import { Store } from 'src/app/interfaces/store.model';
+import { EditStorePage } from './edit-store/edit-store.page';
 
 @Component({
   selector: 'app-stores',
@@ -63,7 +70,7 @@ import { Store } from 'src/app/interfaces/store.model';
 })
 export class StoresPage implements OnInit {
   stores: Signal<Store[]>;
-  @ViewChild('slidingItems') slidingItems: IonItemSliding ;
+  @ViewChild('slidingItems') slidingItems: IonItemSliding;
 
   private db = inject(DatabaseService);
   private modalCtrl = inject(ModalController);
@@ -107,9 +114,29 @@ export class StoresPage implements OnInit {
     }
   }
 
-  editStore(id: number): void {
-    // TODO: navigate to store-details page.
-    console.log(id);
+  async editStore(store: Store): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: EditStorePage,
+      componentProps: { store: store }
+    });
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role == 'cancel' || !data) {
+      this.slidingItems.close();
+      return;
+    };
+
+    try {
+      await this.db.updateStore(data);
+
+      await this.toastService.showSuccessMessage(
+        'Datos del negocio actualizados!'
+      );
+    } catch (_) {
+      await this.toastService.showErrorMessage();
+    }
   }
 
   async deleteStore(id: number): Promise<void> {
