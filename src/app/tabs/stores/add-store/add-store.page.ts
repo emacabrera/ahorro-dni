@@ -118,8 +118,6 @@ export class AddStorePage implements OnInit {
       days: this.util.selectedOptionsIntoDays(formValue.days),
     };
 
-    console.log(store);
-    // await this.db.addStore(store);
     return this.modalCtrl.dismiss(store, 'confirm');
   }
 

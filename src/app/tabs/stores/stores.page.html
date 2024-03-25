@@ -22,24 +22,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" color="light">
-  <!-- <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Negocios App</ion-title>
-      <ion-buttons slot="end">
-        <ion-button>
-        <ion-icon
-          color="primary"
-          slot="icon-only"
-          name="add"
-          (click)="addStore()"
-        ></ion-icon>
-      </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header> -->
-
   <ion-list [inset]="true">
-    <ion-item-sliding *ngFor="let store of stores()">
+    <ion-item-sliding #slidingItems *ngFor="let store of stores()" >
       <ion-item>
         <ion-avatar aria-hidden="true" slot="start">
           <img

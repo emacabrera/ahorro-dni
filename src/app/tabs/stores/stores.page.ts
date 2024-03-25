@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Signal, ViewChild, inject, viewChild } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -32,7 +32,9 @@ import {
 } from 'ionicons/icons';
 import { DatabaseService } from 'src/app/services/database.service';
 import { AddStorePage } from './add-store/add-store.page';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
+import { ToastService } from 'src/app/services/toast.service';
+import { Store } from 'src/app/interfaces/store.model';
 
 @Component({
   selector: 'app-stores',
@@ -60,12 +62,13 @@ import { AlertController, ToastController } from '@ionic/angular';
   ],
 })
 export class StoresPage implements OnInit {
+  stores: Signal<Store[]>;
+  @ViewChild('slidingItems') slidingItems: IonItemSliding ;
+
   private db = inject(DatabaseService);
   private modalCtrl = inject(ModalController);
   private alertCtrl = inject(AlertController);
-  private toastCtrl = inject(ToastController);
-
-  stores = this.db.stores;
+  private toastService = inject(ToastService);
 
   constructor() {
     addIcons({
@@ -76,11 +79,13 @@ export class StoresPage implements OnInit {
       arrowBack,
       list,
       calendar,
-      thumbsUp
+      thumbsUp,
     });
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    this.stores = this.db.stores;
+  }
 
   async addStore() {
     const modal = await this.modalCtrl.create({
@@ -94,23 +99,11 @@ export class StoresPage implements OnInit {
 
     try {
       await this.db.addStore(data);
-      const toast = await this.toastCtrl.create({
-        message: 'Negocio agregado a tu lista!',
-        icon: 'thumbs-up',
-        color: 'success',
-        duration: 3000,
-      });
-
-      await toast.present();
+      await this.toastService.showSuccessMessage(
+        'Negocio agregado a tu lista!'
+      );
     } catch (_) {
-      const toast = await this.toastCtrl.create({
-        message: 'Hubo un error. Por favor intentalo otra vez.',
-        icon: 'sad',
-        color: 'danger',
-        duration: 3500,
-      });
-
-      await toast.present();
+      await this.toastService.showErrorMessage();
     }
   }
 
@@ -127,15 +120,19 @@ export class StoresPage implements OnInit {
       message: 'Seguro que querés borrar este negocio?',
       buttons: [
         {
-          text: 'Aceptar',
-          role: 'confirm',
+          text: 'Cancelar',
+          role: 'cancel',
           handler: () => {
-            this.handleDeleteStore(id);
+            this.slidingItems.closeOpened();
           },
         },
         {
-          text: 'Cancelar',
-          role: 'cancel',
+          text: 'Aceptar',
+          role: 'confirm',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            this.handleDeleteStore(id);
+          },
         },
       ],
     });
@@ -145,17 +142,12 @@ export class StoresPage implements OnInit {
 
   private async handleDeleteStore(id: number) {
     try {
-      await this.db.deleteStoreById(id)
-
-      const toast = await this.toastCtrl.create({
-        message: 'Negocio quitado de tu lista!',
-        icon: 'thumbs-up',
-        color: 'success',
-        duration: 3000,
-      });
-      toast.present();
+      await this.db.deleteStoreById(id);
+      await this.toastService.showSuccessMessage(
+        'Negocio quitado de tu lista!'
+      );
     } catch (_) {
-      // show error toast
+      await this.toastService.showErrorMessage();
     }
   }
 }
