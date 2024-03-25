@@ -38,6 +38,6 @@ export class UtilService {
   toDbString(value: string | null): string | null {
     if (!value) return null;
 
-    return value.replace(/"/g, "'");
+    return `'${value}'`;
   }
 }

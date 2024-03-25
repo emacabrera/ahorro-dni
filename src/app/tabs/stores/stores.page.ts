@@ -87,7 +87,7 @@ export class StoresPage implements OnInit {
     this.stores = this.db.stores;
   }
 
-  async addStore() {
+  async addStore(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: AddStorePage,
     });
@@ -112,7 +112,7 @@ export class StoresPage implements OnInit {
     console.log(id);
   }
 
-  async deleteStore(id: number) {
+  async deleteStore(id: number): Promise<void> {
     if (!id) return;
 
     const alert = await this.alertCtrl.create({
@@ -140,7 +140,7 @@ export class StoresPage implements OnInit {
     await alert.present();
   }
 
-  private async handleDeleteStore(id: number) {
+  private async handleDeleteStore(id: number): Promise<void> {
     try {
       await this.db.deleteStoreById(id);
       await this.toastService.showSuccessMessage(

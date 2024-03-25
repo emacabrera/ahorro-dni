@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Signal,
   WritableSignal,
   computed,
   inject,
@@ -56,42 +57,35 @@ export class DatabaseService {
     this.loadStores();
   }
 
-  get stores() {
+  get stores(): Signal<Store[]> {
     return computed(this._stores);
   }
 
-  async addStore(store: CreateStore) {
+  async addStore(store: CreateStore): Promise<void> {
     const query = `INSERT INTO store (name, address, discount, days) 
       VALUES ('${store.name}', ${this.util.toDbString(store.address)}, ${
       store.discount
     }, '${store.days}')`;
-    console.log(query);
-    const result = await this.db.query(query);
+    await this.db.query(query);
 
     this.loadStores();
-
-    return result;
   }
 
-  async updateStoreById(store: Store) {
+  async updateStoreById(store: Store): Promise<void> {
     const query = `UPDATE store SET name='${store.name}' WHERE id=${store.id}`;
-    const result = await this.db.query(query);
+    await this.db.query(query);
 
     this.loadStores();
-
-    return result;
   }
 
-  async deleteStoreById(id: number) {
+  async deleteStoreById(id: number): Promise<void> {
     const query = `DELETE FROM store WHERE id=${id}`;
-    const result = await this.db.query(query);
+    await this.db.query(query);
 
     this.loadStores();
-
-    return result;
   }
 
-  async seedDatabase() {
+  async seedDatabase(): Promise<void> {
     const query = `INSERT OR IGNORE INTO store (name, address, discount, days)
       VALUES (
         'Ananda',
@@ -99,11 +93,9 @@ export class DatabaseService {
         30,
         '${WeekDays.Wednesday}, ${WeekDays.Thursday}'
       )`;
-    const result = this.db.query(query);
+    await this.db.query(query);
 
     this.loadStores();
-
-    return result;
   }
 
   private async loadStores() {
