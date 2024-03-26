@@ -23,6 +23,9 @@ import {
   IonText,
   IonNote,
   IonButton,
+  IonFab,
+  IonFabButton,
+  IonPopover,
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -35,6 +38,7 @@ import {
   calendar,
   list,
   thumbsUp,
+  ellipsisVertical
 } from 'ionicons/icons';
 import { DatabaseService } from 'src/app/services/database.service';
 import { AddStorePage } from './add-store/add-store.page';
@@ -49,8 +53,9 @@ import { EditStorePage } from './edit-store/edit-store.page';
   styleUrls: ['./stores.page.scss'],
   standalone: true,
   imports: [
-    IonButton,
     CommonModule,
+    // IonicModule,
+    IonButton,
     IonNote,
     IonText,
     IonButtons,
@@ -66,6 +71,9 @@ import { EditStorePage } from './edit-store/edit-store.page';
     IonToolbar,
     IonTitle,
     IonContent,
+    IonFab,
+    IonFabButton,
+    IonPopover
   ],
 })
 export class StoresPage implements OnInit {
@@ -87,6 +95,7 @@ export class StoresPage implements OnInit {
       list,
       calendar,
       thumbsUp,
+      ellipsisVertical
     });
   }
 
@@ -165,6 +174,10 @@ export class StoresPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  orderBy(option: 'day' | 'store'): void {
+    // TODO: order by option.
   }
 
   private async handleDeleteStore(id: number): Promise<void> {
